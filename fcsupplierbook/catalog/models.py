@@ -42,15 +42,23 @@ class Pricing(models.Model):
     indicative_pricing = models.DecimalField(max_digits=16, decimal_places=2, help_text="indicative_pricing.")
     pricing_currency = models.CharField(max_length=3, choices=CURRENCY, help_text="Currency of the pricing.")
 
+    def __str__(self):
+    	return f"Received on {self.date} | due to {self.expiration_date}"
+
 
 class Battery(models.Model):
 	product = models.ForeignKey(Product, on_delete=models.CASCADE)
 	total_energy = models.PositiveIntegerField("Total energy [kWh]")
 
+	def __str__(self):
+		return f"{self.product.model_name} ({self.total_energy})"
 
 class FuelCell(models.Model):
 	product = models.ForeignKey(Product, on_delete=models.CASCADE)
 	rated_power = models.PositiveIntegerField("Rated power [kW]")
+
+	def __str__(self):
+		return f"{self.product.model_name} ({self.rated_power})"
 
 class Employee(models.Model):
     first_name = models.CharField(max_length=32)
@@ -59,5 +67,8 @@ class Employee(models.Model):
     job_title = models.CharField(max_length=32, help_text="Function in the company.")
     phone_number = models.CharField(max_length=15)
     email = models.EmailField(max_length=64)
+
+    def __str__(self):
+    	return f"{self.first_name} {self.last_name} ({self.company.short_name})"
 
 
