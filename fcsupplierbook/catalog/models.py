@@ -1,10 +1,6 @@
 from django.db import models
-
-
-PRODUCT_TYPE = [
-    ("FCM", "fuel cell module"),
-    ("BAT", "battery pack"),
-]
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 
 CURRENCY = [
     ("EUR", "EUR"),
@@ -18,8 +14,10 @@ class Company(models.Model):
     short_name = models.CharField(
         max_length=10, help_text="Shortened name of the company."
     )
-    date_of_foundation = models.DateField(help_text="Date of the company's foundation.")
-    address = models.CharField(max_length=256, help_text="Full address of the company.")
+    year_of_foundation = models.PositiveIntegerField(
+        help_text="Year of the company's foundation."
+    )
+    address = models.TextField(help_text="Full address of the company.")
     number_of_employees = models.PositiveIntegerField(
         null=True, blank=True, help_text="Approximate number of employees."
     )
@@ -29,33 +27,80 @@ class Company(models.Model):
     def get_recently_modified(self):
         return self.objects().order_by("-last_modified")[0]
 
+    def __str__(self):
+        return self.name
+
 
 class Story(models.Model):
-    title = models.CharField(max_length=128, help_text="Short summary of the entry.")
-    full_description = models.TextField(help_text="Full description of the event.")
-    date = models.DateField(auto_now_add=True, help_text="Date of the entry.")
     company = models.ForeignKey(
         Company,
         on_delete=models.PROTECT,
-        help_text="Choose a company that the entry is connected to.",
     )
+    title = models.CharField(max_length=128, help_text="Short summary of the entry.")
+    full_description = models.TextField(help_text="Full description of the event.")
+    date = models.DateField(auto_now_add=True, help_text="Date of the entry.")
 
     def get_recent_stories(self):
         return self.objects().order_by("-date")[3]
 
+    def __str__(self):
+        return self.title
+
+
+class Employee(models.Model):
+    company = models.ForeignKey(Company, on_delete=models.CASCADE)
+    first_name = models.CharField(max_length=32)
+    last_name = models.CharField(max_length=32)
+    job_title = models.CharField(max_length=32, help_text="Function in the company.")
+    phone_number = models.CharField(max_length=15)
+    email = models.EmailField(max_length=64)
+
+    def __str__(self):
+        return f"{self.first_name} {self.last_name} ({self.company.short_name})"
+
+
+class Roadmap(models.Model):
+    company = models.ForeignKey(Company, on_delete=models.CASCADE)
+    goal_title = models.CharField(
+        max_length=64,
+        blank=False,
+        help_text="Short summary of a general goal of a company.",
+    )
+    additional_info = models.TextField()
+    start_year = models.PositiveIntegerField(
+        help_text="The year, that the work on this goal is planned to start."
+    )
+    end_year = models.PositiveIntegerField(
+        blank=True,
+        null=True,
+        help_text="The year, that the work on this goal is planned to end.",
+    )
+
+    def __str__(self):
+        time_period = (
+            f"[{self.start_year} - {self.end_year}]"
+            if self.end_year
+            else f"[{self.start_year}]"
+        )
+        return f"{time_period} {self.goal_title}"
+
 
 class Product(models.Model):
-    product_type = models.CharField(max_length=3, choices=PRODUCT_TYPE)
-    model_name = models.CharField(
-        max_length=32, help_text="Company's name for the product."
-    )
     company = models.ForeignKey(
         Company, on_delete=models.PROTECT, help_text="Company owning the product."
     )
+    model_name = models.CharField(
+        max_length=32, help_text="Company's name for the product."
+    )
+
+    class Meta:
+        abstract = True
 
 
 class Pricing(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    product = GenericForeignKey()
     date = models.DateField(help_text="Date that the offer was made.")
     expiration_date = models.DateField(help_text="Date that the offer will expire.")
     indicative_pricing = models.DecimalField(
@@ -72,29 +117,15 @@ class Pricing(models.Model):
         return self.objects().order_by("-date")[3]
 
 
-class Battery(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+class Battery(Product):
     total_energy = models.PositiveIntegerField("Total energy [kWh]")
 
     def __str__(self):
-        return f"{self.product.model_name} ({self.total_energy})"
+        return f"{self.model_name} ({self.total_energy})"
 
 
-class FuelCell(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+class FuelCell(Product):
     rated_power = models.PositiveIntegerField("Rated power [kW]")
 
     def __str__(self):
-        return f"{self.product.model_name} ({self.rated_power})"
-
-
-class Employee(models.Model):
-    first_name = models.CharField(max_length=32)
-    last_name = models.CharField(max_length=32)
-    company = models.ForeignKey(Company, on_delete=models.CASCADE)
-    job_title = models.CharField(max_length=32, help_text="Function in the company.")
-    phone_number = models.CharField(max_length=15)
-    email = models.EmailField(max_length=64)
-
-    def __str__(self):
-        return f"{self.first_name} {self.last_name} ({self.company.short_name})"
+        return f"{self.model_name} ({self.rated_power})"
