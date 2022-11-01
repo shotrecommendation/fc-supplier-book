@@ -1,12 +1,4 @@
 from django.db import models
-from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
-
-CURRENCY = [
-    ("EUR", "EUR"),
-    ("USD", "USD"),
-    ("PLN", "PLN"),
-]
 
 
 class Company(models.Model):
@@ -83,49 +75,3 @@ class Roadmap(models.Model):
             else f"[{self.start_year}]"
         )
         return f"{time_period} {self.goal_title}"
-
-
-class Product(models.Model):
-    company = models.ForeignKey(
-        Company, on_delete=models.PROTECT, help_text="Company owning the product."
-    )
-    model_name = models.CharField(
-        max_length=32, help_text="Company's name for the product."
-    )
-
-    class Meta:
-        abstract = True
-
-
-class Pricing(models.Model):
-    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
-    object_id = models.PositiveIntegerField()
-    product = GenericForeignKey()
-    date = models.DateField(help_text="Date that the offer was made.")
-    expiration_date = models.DateField(help_text="Date that the offer will expire.")
-    indicative_pricing = models.DecimalField(
-        max_digits=16, decimal_places=2, help_text="indicative_pricing."
-    )
-    pricing_currency = models.CharField(
-        max_length=3, choices=CURRENCY, help_text="Currency of the pricing."
-    )
-
-    def __str__(self):
-        return f"Received on {self.date} | due to {self.expiration_date}"
-
-    def get_recent_offers(self):
-        return self.objects().order_by("-date")[3]
-
-
-class Battery(Product):
-    total_energy = models.PositiveIntegerField("Total energy [kWh]")
-
-    def __str__(self):
-        return f"{self.model_name} ({self.total_energy})"
-
-
-class FuelCell(Product):
-    rated_power = models.PositiveIntegerField("Rated power [kW]")
-
-    def __str__(self):
-        return f"{self.model_name} ({self.rated_power})"
