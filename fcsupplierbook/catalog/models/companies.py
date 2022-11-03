@@ -1,7 +1,12 @@
 from django.db import models
+from .abstract import RecentMixin
 
 
-class Company(models.Model):
+class Company(models.Model, RecentMixin):
+    """
+    Model describing and identifying suppliers.
+    """
+
     name = models.CharField(max_length=100, help_text="Full company name.")
     short_name = models.CharField(
         max_length=10, help_text="Shortened name of the company."
@@ -14,16 +19,17 @@ class Company(models.Model):
         null=True, blank=True, help_text="Approximate number of employees."
     )
     description = models.TextField(help_text="Short description of the company.")
-    last_modified = models.DateField(auto_now=True)
-
-    def get_recently_modified(self):
-        return self.objects().order_by("-last_modified")[0]
 
     def __str__(self):
         return self.name
 
 
-class Story(models.Model):
+class Story(models.Model, RecentMixin):
+    """
+    Model for blog-like entries for storing newses or actions taken in regards
+    to a given company.
+    """
+
     company = models.ForeignKey(
         Company,
         on_delete=models.PROTECT,
@@ -39,10 +45,16 @@ class Story(models.Model):
         return self.title
 
 
-class Employee(models.Model):
+class Employee(models.Model, RecentMixin):
+    """
+    Model for storing data about the employees of the companies that are followed,
+    with regard to their function in the company.
+    """
+
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
     first_name = models.CharField(max_length=32)
     last_name = models.CharField(max_length=32)
+    # Probably 'job_title' should be made a list of choices in the future.
     job_title = models.CharField(max_length=32, help_text="Function in the company.")
     phone_number = models.CharField(max_length=15)
     email = models.EmailField(max_length=64)
@@ -52,6 +64,11 @@ class Employee(models.Model):
 
 
 class Roadmap(models.Model):
+    """
+    Model for storing data about the future goals of the followed companies
+    together with an approximate timeline for the actions regarding these goals.
+    """
+
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
     goal_title = models.CharField(
         max_length=64,

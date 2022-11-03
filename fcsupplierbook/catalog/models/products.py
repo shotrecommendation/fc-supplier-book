@@ -1,28 +1,24 @@
 from django.db import models
-from .companies import Company
-
-
-class Product(models.Model):
-    company = models.ForeignKey(
-        Company, on_delete=models.PROTECT, help_text="Company owning the product."
-    )
-    model_name = models.CharField(
-        max_length=32, help_text="Company's name for the product."
-    )
-
-    class Meta:
-        abstract = True
+from .abstract import Product
 
 
 class Battery(Product):
+    """
+    Model describing specific battery technical parameters.
+    """
+
     total_energy = models.PositiveIntegerField("Total energy [kWh]")
 
     def __str__(self):
-        return f"{self.model_name} ({self.total_energy})"
+        return f"{self.company.short_name} - {self.model_name} ({self.total_energy}kWh)"
 
 
 class FuelCell(Product):
+    """
+    Model describing specific fuel cell technical parameters.
+    """
+
     rated_power = models.PositiveIntegerField("Rated power [kW]")
 
     def __str__(self):
-        return f"{self.model_name} ({self.rated_power})"
+        return f"{self.company.short_name} - {self.model_name} ({self.rated_power}kW)"

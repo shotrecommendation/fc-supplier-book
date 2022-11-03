@@ -1,3 +1,4 @@
 from .companies import Company, Employee, Story, Roadmap
-from .products import Product, Battery, FuelCell
-from .pricings import Pricing
+from .products import Battery, FuelCell
+from .pricings import FuelCellPricing, BatteryPricing
+from .abstract import RecentMixin, Product, Pricing
