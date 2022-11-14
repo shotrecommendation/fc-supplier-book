@@ -1,7 +1,9 @@
-from django.db import models
-from .products import Battery, FuelCell
 from decimal import Decimal
+
+from django.db import models
+
 from .abstract import Pricing
+from .products import Battery, FuelCell
 
 
 class BatteryPricing(Pricing):

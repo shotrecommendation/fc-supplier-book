@@ -1,7 +1,8 @@
 from django.contrib import admin
-from .models.companies import Company, Employee, Story, Roadmap
-from .models.products import Battery, FuelCell
+
+from .models.companies import Company, Employee, Roadmap, Story
 from .models.pricings import BatteryPricing, FuelCellPricing
+from .models.products import Battery, FuelCell
 
 admin.site.register(Company)
 admin.site.register(Story)

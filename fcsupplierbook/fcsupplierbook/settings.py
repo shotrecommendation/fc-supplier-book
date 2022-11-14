@@ -83,6 +83,9 @@ DATABASES = {
         "PASSWORD": environ.get("DB_PWD", "not-production-safe"),
         "HOST": "localhost",
         "PORT": "",
+        "TEST": {
+            "NAME": "test",
+        },
     }
 }
 

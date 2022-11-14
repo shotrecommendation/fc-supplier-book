@@ -1,5 +1,5 @@
-from django.utils import timezone
 from django.db import models
+from django.utils import timezone
 
 
 class RecentMixin:
@@ -13,7 +13,7 @@ class RecentMixin:
 
     def get_recently_modified(self, requested_number: int = 3):
         """
-        Get the X recently added/modified products,
+        Get the X recently added/modified instances of a model,
         where X is defined by the requested_number parameter.
         """
         return self.objects().order_by("-last_modified")[requested_number]
@@ -34,13 +34,6 @@ class Product(models.Model, RecentMixin):
 
     class Meta:
         abstract = True
-
-    def get_recently_modified(self, requested_number: int = 3):
-        """
-        Get the X recently added/modified products,
-        where X is defined by the requested_number parameter.
-        """
-        return self.objects().order_by("-last_modified")[requested_number]
 
 
 class Pricing(models.Model, RecentMixin):
@@ -69,13 +62,6 @@ class Pricing(models.Model, RecentMixin):
 
     def __str__(self):
         return f"Received on {self.received_date} | due to {self.expiration_date}"
-
-    def get_recent_offers(self, requested_number: int = 3):
-        """
-        Get the X most recently received offers,
-        where X is defined by the requested_number parameter
-        """
-        return self.objects().order_by("-received_date")[requested_number]
 
     def is_valid(self):
         """
