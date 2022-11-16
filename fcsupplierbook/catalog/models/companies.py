@@ -13,13 +13,15 @@ class Company(models.Model, RecentMixin):
         max_length=10, help_text="Shortened name of the company."
     )
     year_of_foundation = models.PositiveIntegerField(
-        help_text="Year of the company's foundation."
+        null=True, blank=True, help_text="Year of the company's foundation."
     )
-    address = models.TextField(help_text="Full address of the company.")
+    address = models.TextField(blank=True, help_text="Full address of the company.")
     number_of_employees = models.PositiveIntegerField(
         null=True, blank=True, help_text="Approximate number of employees."
     )
-    description = models.TextField(help_text="Short description of the company.")
+    description = models.TextField(
+        blank=True, help_text="Short description of the company."
+    )
 
     def __str__(self):
         return self.name
