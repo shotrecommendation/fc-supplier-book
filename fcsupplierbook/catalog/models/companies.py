@@ -54,11 +54,21 @@ class Employee(models.Model, RecentMixin):
     with regard to their function in the company.
     """
 
+    FUNCTIONS = [
+        ("SERV", "serviceman"),
+        ("ENGI", "engineer"),
+        ("SALE", "salesman"),
+        ("MANA", "management"),
+        ("RCPT", "reception"),
+        ("SECU", "security"),
+    ]
+
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
     first_name = models.CharField(max_length=32)
     last_name = models.CharField(max_length=32)
-    # Probably 'job_title' should be made a list of choices in the future.
-    job_title = models.CharField(max_length=32, help_text="Function in the company.")
+    function = models.CharField(
+        max_length=4, choices=FUNCTIONS, help_text="Function in the company."
+    )
     phone_number = models.CharField(max_length=15)
     email = models.EmailField(max_length=64)
 
