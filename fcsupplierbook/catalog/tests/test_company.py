@@ -39,12 +39,10 @@ def test_short_name_length_over_10(company_factory):
     Test if companies with short_name being longer than
     10 characters are NOT being added to the database.
     """
-    company = company_factory.build()
-    company.short_name = company.name
     with pytest.raises(
         DataError, match="value too long for type character varying\\(10\\)"
     ):
-        company.save()
+        company_factory.create(short_name="Short name too long")
 
 
 @pytest.mark.django_db
