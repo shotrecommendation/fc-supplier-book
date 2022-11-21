@@ -1,9 +1,10 @@
 import re
+import random
 
 import factory
 from faker import Faker
 
-from catalog.models.companies import Company, Story
+from catalog.models.companies import Company, Employee, Story
 
 fake = Faker()
 
@@ -26,9 +27,7 @@ class CompanyFactory(factory.django.DjangoModelFactory):
 
 class StoryFactory(factory.django.DjangoModelFactory):
     """
-    Story model factory with all parameters filled in with random values
-    except for the company ForeignKey, which has to be assigned during
-    build or creation.
+    Story model factory with all parameters filled in with random values.
     """
 
     class Meta:
@@ -37,3 +36,19 @@ class StoryFactory(factory.django.DjangoModelFactory):
     company = factory.SubFactory(CompanyFactory)
     title = fake.sentence(nb_words=10)
     full_description = fake.paragraphs(nb=3)
+
+
+class EmployeeFactory(factory.django.DjangoModelFactory):
+    """
+    Employee model factory with all parameters filled in with random values.
+    """
+
+    class Meta:
+        model = Employee
+
+    company = factory.SubFactory(CompanyFactory)
+    first_name = fake.first_name()
+    last_name = fake.last_name()
+    function = Employee.FUNCTIONS[random.randint(0, 6)][0]
+    phone_number = fake.msisdn()
+    email = f"{first_name}.{last_name}@example.com"

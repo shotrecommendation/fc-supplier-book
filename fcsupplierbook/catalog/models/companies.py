@@ -64,8 +64,8 @@ class Employee(models.Model, RecentMixin):
     ]
 
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
-    first_name = models.CharField(max_length=32)
-    last_name = models.CharField(max_length=32)
+    first_name = models.CharField(max_length=64)
+    last_name = models.CharField(max_length=64)
     function = models.CharField(
         max_length=4, choices=FUNCTIONS, help_text="Function in the company."
     )
