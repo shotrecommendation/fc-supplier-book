@@ -61,15 +61,16 @@ class Employee(models.Model, RecentMixin):
         ("MANA", "management"),
         ("RCPT", "reception"),
         ("SECU", "security"),
+        ("UNKN", "unknown"),
     ]
 
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
     first_name = models.CharField(max_length=64)
     last_name = models.CharField(max_length=64)
     function = models.CharField(
-        max_length=4, choices=FUNCTIONS, help_text="Function in the company."
+        max_length=4, choices=FUNCTIONS, default="UNKN", help_text="Function in the company."
     )
-    phone_number = models.CharField(max_length=15)
+    phone_number = models.CharField(max_length=15, blank=True, null=True)
     email = models.EmailField(max_length=64)
 
     def __str__(self):

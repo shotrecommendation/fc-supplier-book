@@ -49,6 +49,6 @@ class EmployeeFactory(factory.django.DjangoModelFactory):
     company = factory.SubFactory(CompanyFactory)
     first_name = fake.first_name()
     last_name = fake.last_name()
-    function = Employee.FUNCTIONS[random.randint(0, 6)][0]
+    function = Employee.FUNCTIONS[random.randint(0, 7)][0]
     phone_number = fake.msisdn()
     email = f"{first_name}.{last_name}@example.com"
