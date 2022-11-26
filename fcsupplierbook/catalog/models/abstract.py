@@ -19,7 +19,7 @@ class RecentMixin:
         return self.objects().order_by("-last_modified")[requested_number]
 
 
-class Product(models.Model, RecentMixin):
+class GenericProduct(models.Model, RecentMixin):
     """
     Abstract class defining the base for the product models of various suppliers.
     """

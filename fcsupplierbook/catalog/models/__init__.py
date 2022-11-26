@@ -1,4 +1,9 @@
-from .abstract import Pricing, Product, RecentMixin
+from .abstract import Pricing, GenericProduct, RecentMixin
 from .companies import Company, Employee, Roadmap, Story
-from .pricings import BatteryPricing, FuelCellPricing
-from .products import Battery, FuelCell
+from .products import (
+    ProductType,
+    Product,
+    ParameterCategory,
+    ProductParameter,
+    ParameterValue,
+)
