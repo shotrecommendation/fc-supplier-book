@@ -94,12 +94,14 @@ class Roadmap(models.Model):
     )
     additional_info = models.TextField()
     start_year = models.PositiveIntegerField(
+        blank=True,
+        null=True,
         help_text="The year, that the work on this goal is planned to start."
     )
     end_year = models.PositiveIntegerField(
         blank=True,
         null=True,
-        help_text="The year, that the work on this goal is planned to end.",
+        help_text="The year, that the work on this goal is planned to be achieved by.",
     )
 
     def __str__(self):

@@ -71,7 +71,7 @@ def test_employee_with_phone_number_longer_than_15(employee_factory):
     """
     phone_number_too_long = "+48 123 456 7891"
     with pytest.raises(DataError):
-        employee_factory.create(phone_number_too_long=name_too_long)
+        employee_factory.create(phone_number=phone_number_too_long)
 
 
 @pytest.mark.django_db
